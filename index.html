@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>babapirorat6756</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Fredoka', sans-serif; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background:  #005baa 100%;
+      transition: background 1.2s ease;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    body.dark-mode {
+      background: #07070b;
+    }
+
+    .game-container {
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      z-index: 2;
+    }
+
+    .game-container.hidden {
+      opacity: 0;
+      transform: scale(0.92);
+      pointer-events: none;
+      display: none;
+    }
+
+    .mascot {
+      width: 135px;
+      height: 135px;
+      object-fit: contain;
+      margin-bottom: -18px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .card {
+      background: rgba(203, 227, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border: 3px solid #ff4d9a;
+      border-radius: 28px;
+      padding: 32px 24px 26px;
+      box-shadow: 0 12px 30px rgba(173, 206, 255, 0.45);
+    }
+
+    h2 {
+      color: #5c4b51;
+      font-size: 1.4rem;
+      margin-bottom: 18px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 18px;
+      border: 2px solid #ff4d9a;
+      outline: none;
+      font-size: 1rem;
+      color: #4a4a4a;
+      background: #fff;
+      transition: border-color 0.3s;
+      margin-bottom: 14px;
+    }
+
+    input:focus {
+      border-color: #ff9ec7;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 18px;
+      background:  #9ecbff;
+      color: white;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(255, 158, 199, 0.4);
+      border: 2px solid #51a2ff;
+      transition: transform 0.2s;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .love-popup {
+      margin-top: 16px;
+      min-height: 28px;
+      color: #ff4d6d;
+      font-size: 1.15rem;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: all 0.4s ease;
+    }
+
+    .love-popup.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+ 
+    #final-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 5;
+      padding: 20px;
+    }
+
+    svg {
+      width: 340px;
+      height: 310px;
+      overflow: visible;
+    }
+
+    .red-heart {
+      fill: none;
+      stroke: #ff1e42;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+      filter: drop-shadow(0 0 8px rgba(255, 30, 66, 0.75));
+    }
+
+    .h1 { stroke-width: 5.5; }
+    .h2 { stroke-width: 4.8; }
+    .h3 { stroke-width: 4.2; }
+    .h4 { stroke-width: 3.6; }
+    .h5 { stroke-width: 3.0; }
+
+    .draw-1 { animation: drawHeart 1.8s ease-in-out 0.0s forwards; }
+    .draw-2 { animation: drawHeart 1.8s ease-in-out 0.35s forwards; }
+    .draw-3 { animation: drawHeart 1.8s ease-in-out 0.70s forwards; }
+    .draw-4 { animation: drawHeart 1.8s ease-in-out 1.05s forwards; }
+    .draw-5 { animation: drawHeart 1.8s ease-in-out 1.40s forwards; }
+
+    @keyframes drawHeart {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    .pixel-love-text {
+      font-family: 'Press Start 2P', monospace;
+      color: #ff1e42;
+      font-size: 1.15rem;
+      line-height: 1.6;
+      text-align: center;
+      margin-top: 24px;
+      text-shadow: 0 0 10px rgba(255, 30, 66, 0.65);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+
+    .pixel-love-text.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container" id="quiz-box">
+    <img src="ermişyawn.png" alt="Ermiş Yawn" class="mascot" />
+
+    <div class="card">
+      <h2 id="question-text">En sevdiğin araç modeli?</h2>
+      <input type="text" id="answer-input"autocomplete="off" />
+      <button id="submit-btn" onclick="handleAnswer()">Cevapla :3</button>
+      <div class="love-popup" id="love-msg"> Ben de seni seviyorum </div>
+    </div>
+  </div>
+
+  <div id="final-screen">
+    <svg viewBox="0 0 220 200">
+      <path id="heart-1" class="red-heart h1"
+        d="M110 180 C110 180, 15 120, 15 60 C15 28, 40 8, 68 8 C87 8, 102 19, 110 33 C118 19, 133 8, 152 8 C180 8, 205 28, 205 60 C205 120, 110 180, 110 180 Z" />
+
+
+      <path id="heart-2" class="red-heart h2"
+        d="M110 164 C110 164, 28 111, 28 60 C28 34, 49 18, 72 18 C88 18, 102 28, 110 40 C118 28, 132 18, 148 18 C171 18, 192 34, 192 60 C192 111, 110 164, 110 164 Z" />
+
+    
+      <path id="heart-3" class="red-heart h3"
+        d="M110 148 C110 148, 41 102, 41 60 C41 40, 58 28, 76 28 C90 28, 102 36, 110 47 C118 36, 130 28, 144 28 C162 28, 179 40, 179 60 C179 102, 110 148, 110 148 Z" />
+
+
+      <path id="heart-4" class="red-heart h4"
+        d="M110 132 C110 132, 54 93, 54 60 C54 46, 67 38, 81 38 C92 38, 102 45, 110 54 C118 45, 128 38, 139 38 C153 38, 166 46, 166 60 C166 93, 110 132, 110 132 Z" />
+
+
+      <path id="heart-5" class="red-heart h5"
+        d="M110 116 C110 116, 67 84, 67 60 C67 51, 76 47, 86 47 C95 47, 103 53, 110 61 C117 53, 125 47, 134 47 C144 47, 153 51, 153 60 C153 84, 110 116, 110 116 Z" />
+    </svg>
+
+    <div class="pixel-love-text" id="pixel-love">SENİ SEVİYORUM</div>
+  </div>
+
+  <script>
+    const questions = [
+      "En sevdiğin araç modeli?",
+      "En sevdiğin oyun ne?",
+      "En sevdiğin yemek ne?",
+      "En sevdiğin anime ne?"
+    ];
+
+    let currentStep = 0;
+    let isTransitioning = false;
+
+    const inputEl = document.getElementById("answer-input");
+    inputEl.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") handleAnswer();
+    });
+
+    function handleAnswer() {
+      if (isTransitioning) return;
+      const val = inputEl.value.trim();
+      if (!val) {
+        inputEl.focus();
+        return;
+      }
+
+      isTransitioning = true;
+      const loveMsg = document.getElementById("love-msg");
+      loveMsg.classList.add("show");
+
+      setTimeout(() => {
+        loveMsg.classList.remove("show");
+        currentStep++;
+
+        if (currentStep < questions.length) {
+          document.getElementById("question-text").textContent = questions[currentStep];
+          inputEl.value = "";
+          inputEl.focus();
+          isTransitioning = false;
+        } else {
+          startHeartFinale();
+        }
+      }, 1300);
+    }
+
+    function startHeartFinale() {
+      const quizBox = document.getElementById("quiz-box");
+      quizBox.style.opacity = "0";
+      quizBox.style.transform = "scale(0.92)";
+
+      document.body.classList.add("dark-mode");
+
+      setTimeout(() => {
+        quizBox.classList.add("hidden");
+        const finalScreen = document.getElementById("final-screen");
+        finalScreen.style.display = "flex";
+
+        document.getElementById("heart-1").classList.add("draw-1");
+        document.getElementById("heart-2").classList.add("draw-2");
+        document.getElementById("heart-3").classList.add("draw-3");
+        document.getElementById("heart-4").classList.add("draw-4");
+        document.getElementById("heart-5").classList.add("draw-5");
+
+        setTimeout(() => {
+          document.getElementById("pixel-love").classList.add("visible");
+        }, 2500);
+      }, 800);
+    }
+  </script>
+</body>
+</html>
